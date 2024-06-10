@@ -36,7 +36,7 @@ def call_llm(prompt) :
     
 def text_to_uql(query):
     prompt = f"""
-You are an expert in transforming natural language queries into UQL queries using a specified ontology. Based on user questions about data stored in an RDF graph, employ the provided ontology , documentation and steps to understand the UQL syntax. Then, generate the UQL query equivalent for the given natural language query. The response should contain only the UQL query without any explanations or additional text.
+You are an expert in transforming natural language queries into UQL queries using a specified ontology. Based on user questions about data stored in an RDF graph, employ the provided ontology, documentation, and steps to understand the UQL syntax. Then, generate the UQL query equivalent for the given natural language query. If a component of the query does not have a direct mapping in the RDF ontology, enclose the term in parentheses to indicate a conceptual search term. The response should contain only the UQL query without any explanations or additional text.
 
 ** RDF Data Model and Ontology **
 @prefix vpmReference: <http://www.3ds.com/RDF/ontology/archetype/vpmReference#> .
@@ -146,7 +146,7 @@ ds6w:endorsements rdf:type owl:DatatypeProperty;
 
 ds6w:contentStructure rdf:type owl:DatatypeProperty;
     rdfs:label "Content Structure"@en;
-    rdfs:comment "Content structure of the product, indicating its hierarchy within the overall design or assembly."@en;
+    rdfs:comment "Content structure of the product, indicating its hierarchy within the overall design or assembly . This property is applicable exclusively to instances of the vpmReference:VPMReference class"@en;
     rdfs:domain [ rdf:unionOf (vpmReference:VPMReference, 3DShape) ];
     rdfs:range xsd:string;
     owl:oneOf ("Root" "Leaf" "Intermediate" "Standalone").
@@ -161,7 +161,7 @@ ds6w:docExtension rdf:type owl:DatatypeProperty;
 ds6w:businessRole rdf:type owl:DatatypeProperty ;
     rdfs:label "Role"@en ;
     rdfs:comment "The role or job title of the person."@en ;
-    rdfs:domain pno:Person ;
+    rdfs:domain pno:person ;
     rdfs:range xsd:string .
     owl:oneOf ("Strategy & Managemenent" "engineer" "software engineer" "Data Scientist").
 
@@ -216,12 +216,41 @@ UQL queries are expressed in a pseudo UQL format with operators like AND, OR, NO
    - enable_mono_sixw: Enable ds6w split for the query.
    - with_synthesis_ranged: Include ranged facets in the synthesis.
    - facet_params: Customize depth and width of synthesis for given predicates.
+   - dos_bucket: Pass a DOS bucket for all DOS checkouts.
+   - fcs_url_mode: Choose between ‘DIRECT’ and ‘REDIRECT’ modes for FCS checkouts.
+   - with_Idx_Search: Ignore the searchable property if true.
    - with_relationship_search: Include relationships in the search if true.
 
-4. **Order Field**:
+4. **Label Parameter**:
+   - A query must include a label parameter in JSON format, such as $ApplicationName-$User-$Timestamp.
+
+5. **Order Field**:
    - Defines the sort criterion. Less than 1000 objects: sort on any predicates. More than 1000 objects: sort on specific attributes like relevance, ds6w:modified, ds6w:created, ds6w:responsible, ds6w:label.
 
-** Example UQL Queries **
+**Detailed Conversion Process**
+1. **Identify Key Components**: Analyze the natural language query to determine the main entity (subject), the properties or relations (predicates), and the values or instances related to the predicates (objects).
+2. **Map to RDF Concepts**: Use the ontology to correlate the identified natural language elements with the appropriate RDF classes and predicates.
+3. **Fallback Mechanism for Unmapped Terms**:f a predicate or subject from the natural language query (NLQ) does not directly map to an RDF term, enclose the term within parentheses and position it at the beginning of the UQL query. This indicates that the term is treated as a conceptual or textual search term, highlighting its importance as a primary search criterion that does not correspond directly to specific RDF ontology properties.
+4. **Construct the UQL Query**: Synthesize the mapped elements into a UQL query following the defined syntax, ensuring alignment with the RDF ontology structure.
+
+**Example UQL Query Construction**
+Given the natural language query: "Show me all documents created on January 1, 2020, by John Doe about Innovation"
+- **Step 1: Parse the Natural Language Query**
+  - Subject: Documents
+  - Predicate: Created by and date of creation
+  - Object: John Doe and January 1, 2020
+  - unmapped term: "Innovation"
+
+- **Step 2: Map to RDF Concepts**
+  - "Documents" corresponds to instances of the 'Document' class.
+  - "Created by" maps to the 'ds6w:lastModifiedBy' or 'ds6w:responsible'.
+  - "Date of creation" maps to 'ds6w:created'.
+  - "John Doe" corresponds to instances of the 'Person' class
+   - "Innovation" is not directly mapped: corresponds to nothing
+- **Step 3: Formulate the UQL Query**
+  - `(Innovation) AND[ds6w:type]:"Document" AND [ds6w:created]>="2020-01-01T00:00:00.000Z" AND ([ds6w:lastModifiedBy]:"John Doe" OR [ds6w:responsible]:"John Doe")`
+
+  ** Example UQL Queries **
 
    - Example 1:
      - Natural Language: give me physical products that are created between 2024-05-01 to 2024-05-28 by : MCM OCDxComplianceUser
@@ -235,24 +264,9 @@ UQL queries are expressed in a pseudo UQL format with operators like AND, OR, NO
      - Natural Language: give me all documents created by Insp_R1132100512396 EUW12
      - UQL: [ds6w:type]:"Document "AND ((([ds6w:lastModifiedBy]:\"Insp_R1132100512396 EUW12\" OR [ds6w:responsible]:\"Insp_R1132100512396 EUW12\")))"
 
-**Detailed Conversion Process**
-1. **Identify Key Components**: Analyze the natural language query to determine the main entity (subject), the properties or relations (predicates), and the values or instances related to the predicates (objects).
-2. **Map to RDF Concepts**: Use the ontology to correlate the identified natural language elements with the appropriate RDF classes and predicates.
-3. **Construct the UQL Query**: Synthesize the mapped elements into a UQL query following the defined syntax, ensuring alignment with the RDF ontology structure.
-
-**Example UQL Query Construction**
-Given the natural language query: "Show me all documents created on January 1, 2020, by John Doe."
-- **Step 1: Parse the Natural Language Query**
-  - Subject: Documents
-  - Predicate: Created by and date of creation
-  - Object: John Doe and January 1, 2020
-- **Step 2: Map to RDF Concepts**
-  - "Documents" corresponds to instances of the 'Document' class.
-  - "Created by" maps to the 'ds6w:lastModifiedBy' or 'ds6w:responsible'.
-  - Date of creation maps to 'ds6w:created'.
-  -John Doe corresponds to instances of the 'Person' class
-- **Step 3: Formulate the UQL Query**
-  - `[ds6w:type]:"Document" AND [ds6w:created]>="2020-01-01T00:00:00.000Z" AND ([ds6w:lastModifiedBy]:"John Doe" OR [ds6w:responsible]:"John Doe")`
+    - Example 4:
+    - Natural Language: find all posts about innovation
+     - UQL: (innovation) AND [ds6w:type]:\"swym:Post\"
 
 ### Based on the natural language query: "{query}", generate the corresponding UQL query using the ontology and RDF relationships. The output should contain only the UQL query, strictly adhering to the syntax and ontology requirements.
 """
@@ -277,7 +291,9 @@ Please review your UQL query and revise it with these guidelines:
 3. Use logical operators (AND, OR, NOT) correctly within the query.
 4. Adhere to the required date and number formats as per UQL standards.
 5. Ensure that all conditions and joins are appropriately represented.
-
+7. You are tasked with generating queries based on a specified RDF ontology. When creating queries, it is crucial to respect the domain constraints of properties and the defined relationships between classes. Ensure that each property is used with the correct RDF class according to the ontology's specifications. Verify that the joins in your queries properly reflect the legitimate associations between entities as defined in the ontology.
+8. **Fallback Mechanism for Unmapped Terms**:f a predicate or subject from the natural language query (NLQ) does not directly map to an RDF term, enclose the term within parentheses and position it at the beginning of the UQL query. This indicates that the term is treated as a conceptual or textual search term, highlighting its importance as a primary search criterion that does not correspond directly to specific RDF ontology properties.
+9.  [ds6w:contentStructure]  property should not be applied to any other class outside of vpmReference:VPMReference. Using this property with any non-compliant class, such as swym:Post, is incorrect and may lead to data inconsistencies or errors in data interpretation
 Please revise your UQL query based on these insights and ensure it strictly adheres to the rules provided. Respond ONLY with the valid UQL query.
 """
     corrected_uql = call_llm(reflection_prompt)

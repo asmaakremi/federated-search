@@ -1,0 +1,20 @@
+version: '1.0'  
+
+services:
+  flask-api:
+    build: .\flask_api
+    ports:
+      - "0.0.0.0:5000:5000" 
+    volumes:
+      - /app
+    environment:
+      - FLASK_ENV=development
+
+  springboot-api:
+    build: .\groq
+    ports:
+      - "0.0.0.0:8080:8080"
+    volumes:
+      - /app
+    depends_on:
+      - flask-api

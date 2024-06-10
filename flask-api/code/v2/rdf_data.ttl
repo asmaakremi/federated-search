@@ -1,0 +1,23 @@
+@prefix archetype: <http://www.3ds.com/RDF/ontology/archetype#> .
+@prefix ds6w: <http://www.w3.org/ds6w#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix pno: <http://www.3ds.com/RDF/ontology/archetype/person#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vpmReference: <http://www.3ds.com/RDF/ontology/archetype/vpmReference#> .
+
+pno:person123 a pno:Person ;
+    pno:name "Alice" ;
+    ds6w:businessRole "VP" .
+
+pno:person124 a pno:Person ;
+    pno:name "Bob" ;
+    ds6w:businessRole "Data Scientist" .
+
+vpmReference:VPMReference a owl:Class ;
+    rdfs:comment "Physical Product archetype"@en ;
+    rdfs:subClassOf archetype:Archetype .
+
+pno:Person a owl:Class ;
+    rdfs:label "Person"@en ;
+    rdfs:comment "Represents an individual person."@en .
+

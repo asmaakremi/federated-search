@@ -11,7 +11,7 @@ This proof of concept (POC) demonstrates the conversion of Natural Language Quer
    Use the ontology to correlate the identified natural language elements with the appropriate RDF classes and predicates.
 
 3. **Fallback Mechanism for Unmapped Terms**:
-   If a predicate or subject from the NLQ does not directly map to an RDF term, enclose the term within parentheses and position it at the beginning of the UQL query. This indicates that the term is treated as a conceptual or textual search term, highlighting its importance as a primary search criterion that does not correspond directly to specific RDF ontology properties.
+  unmapped terms treated as a conceptual or textual search term that does not correspond directly to specific RDF ontology properties.
 
 4. **Construct the UQL Query**:
    Synthesize the mapped elements into a UQL query following the defined syntax, ensuring alignment with the RDF ontology structure.

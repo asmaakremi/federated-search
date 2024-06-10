@@ -12,7 +12,6 @@ def call_llm(prompt) :
         'Authorization': 'Bearer vtYvpB9U+iUQwl0K0MZIj+Uo5u6kilAZJdgHGVBEhNc=',
         'Content-Type': 'application/json'
     }
-
     messages = [{"role": "user", "content": prompt}]
     payload = {
         "model":"meta-llama/Meta-Llama-3-8B-Instruct",
@@ -37,7 +36,7 @@ def call_llm(prompt) :
     
 def text_to_uql(query):
     prompt = f"""
-You are an expert in transforming natural language queries into UQL queries using a specified ontology. Based on user questions about data stored in an RDF graph, employ the provided ontology , documentation and steps to understand the UQL syntax, rules, and ontology. Then, generate the UQL query equivalent for the given natural language query based on the Conversion Process i provided . The response should contain only the UQL query without any explanations or additional text.
+You are an expert in transforming natural language queries into UQL queries using a specified ontology. Based on user questions about data stored in an RDF graph, employ the provided ontology , documentation and steps to understand the UQL syntax. Then, generate the UQL query equivalent for the given natural language query. The response should contain only the UQL query without any explanations or additional text.
 
 ** RDF Data Model and Ontology **
 @prefix vpmReference: <http://www.3ds.com/RDF/ontology/archetype/vpmReference#> .
@@ -217,15 +216,9 @@ UQL queries are expressed in a pseudo UQL format with operators like AND, OR, NO
    - enable_mono_sixw: Enable ds6w split for the query.
    - with_synthesis_ranged: Include ranged facets in the synthesis.
    - facet_params: Customize depth and width of synthesis for given predicates.
-   - dos_bucket: Pass a DOS bucket for all DOS checkouts.
-   - fcs_url_mode: Choose between ‘DIRECT’ and ‘REDIRECT’ modes for FCS checkouts.
-   - with_Idx_Search: Ignore the searchable property if true.
    - with_relationship_search: Include relationships in the search if true.
 
-4. **Label Parameter**:
-   - A query must include a label parameter in JSON format, such as $ApplicationName-$User-$Timestamp.
-
-5. **Order Field**:
+4. **Order Field**:
    - Defines the sort criterion. Less than 1000 objects: sort on any predicates. More than 1000 objects: sort on specific attributes like relevance, ds6w:modified, ds6w:created, ds6w:responsible, ds6w:label.
 
 ** Example UQL Queries **
@@ -235,7 +228,7 @@ UQL queries are expressed in a pseudo UQL format with operators like AND, OR, NO
      - UQL: [ds6w:created]>="2024-05-01T00:00:00.000Z" AND [ds6w:created]<="2024-05-28T23:59:59.000Z" AND [ds6w:type]:"VPMReference"  AND (([ds6w:lastModifiedBy]:"MCM OCDxComplianceUser" OR [ds6w:responsible]:"MCM OCDxComplianceUser") 
 
    - Example 2:
-     - Natural Language: search for posts created by enopotionuser01 having number or comments or likes > 0
+     - Natural Language: search for posts created by enopotionuser01 having number of likes or comments or likes > 0
      - UQL: [ds6w:type]:"swym:Post" And [ds6w:responsible]:"enopotionuser01" AND [ds6w:comments]:>0 AND [ds6w:endorsements]:>0
 
     - Example 3:
@@ -243,17 +236,9 @@ UQL queries are expressed in a pseudo UQL format with operators like AND, OR, NO
      - UQL: [ds6w:type]:"Document "AND ((([ds6w:lastModifiedBy]:\"Insp_R1132100512396 EUW12\" OR [ds6w:responsible]:\"Insp_R1132100512396 EUW12\")))"
 
 **Detailed Conversion Process**
-1. **Identify Key Components**: Extract the subject, predicate, and object from the natural language query.
-   - **Subject**: Refers to the main entity or class being queried (e.g., Documents, Products).
-   - **Predicate**: Refers to the property or relation within the ontology (e.g., created by, modified by).
-   - **Object**: Refers to the specific value or instance related to the predicate (e.g., a date, a person’s name).
-
-2. **Map to RDF Concepts**:
-   - Understand the ontology’s classification of entities and properties. Map the identified elements to the appropriate RDF classes and predicates.
-   - Utilize the RDF ontology to align the natural language elements with the correct RDF terms.
-
-3. **Construct the UQL Query**:
-   - Combine the identified and mapped elements using the UQL syntax, ensuring that all terms are used accurately and respect the RDF ontology structure.
+1. **Identify Key Components**: Analyze the natural language query to determine the main entity (subject), the properties or relations (predicates), and the values or instances related to the predicates (objects).
+2. **Map to RDF Concepts**: Use the ontology to correlate the identified natural language elements with the appropriate RDF classes and predicates.
+3. **Construct the UQL Query**: Synthesize the mapped elements into a UQL query following the defined syntax, ensuring alignment with the RDF ontology structure.
 
 **Example UQL Query Construction**
 Given the natural language query: "Show me all documents created on January 1, 2020, by John Doe."
@@ -265,10 +250,11 @@ Given the natural language query: "Show me all documents created on January 1, 2
   - "Documents" corresponds to instances of the 'Document' class.
   - "Created by" maps to the 'ds6w:lastModifiedBy' or 'ds6w:responsible'.
   - Date of creation maps to 'ds6w:created'.
+  -John Doe corresponds to instances of the 'Person' class
 - **Step 3: Formulate the UQL Query**
   - `[ds6w:type]:"Document" AND [ds6w:created]>="2020-01-01T00:00:00.000Z" AND ([ds6w:lastModifiedBy]:"John Doe" OR [ds6w:responsible]:"John Doe")`
 
-### Based on the natural language query: "{query}", write a valid UQL query that accurately extracts or calculates the requested information from the RDF graph, strictly adhering to the ontology and RDF relationships. The output should contain only the UQL query, without any special characters or explanations.
+### Based on the natural language query: "{query}", generate the corresponding UQL query using the ontology and RDF relationships. The output should contain only the UQL query, strictly adhering to the syntax and ontology requirements.
 """
     try:
         return call_llm(prompt), prompt
@@ -291,7 +277,6 @@ Please review your UQL query and revise it with these guidelines:
 3. Use logical operators (AND, OR, NOT) correctly within the query.
 4. Adhere to the required date and number formats as per UQL standards.
 5. Ensure that all conditions and joins are appropriately represented.
-6. Important: your conversion incorrectly identified the object type in the UQL query. The original query asked for "all  documents with extension pdf," but your response mistakenly used "VPMReference" instead of "Document". The correct field for a document type should be "[ds6w:type]:\"Document\"".
 
 Please revise your UQL query based on these insights and ensure it strictly adheres to the rules provided. Respond ONLY with the valid UQL query.
 """

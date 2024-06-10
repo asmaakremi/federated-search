@@ -2,7 +2,7 @@ version: '1.0'
 
 services:
   flask-api:
-    build: .\flask_api
+    build: .\flask-api
     ports:
       - "0.0.0.0:5000:5000" 
     volumes:

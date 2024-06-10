@@ -12,9 +12,6 @@
 @prefix pno: <http://www.3ds.com/RDF/ontology/archetype/person#> 
 @prefix swym: <http://www.3ds.com/RDF/ontology/archetype/swym#>
 
-
-# Ontology declaration
-
 vpmReference: a owl:Ontology ;
      rdfs:comment "Physical Product archetype"@en .
 
@@ -24,7 +21,6 @@ pno: a owl:Ontology ;
 swym: a owl:Ontology ;
     rdfs:label "SWYM Social Media Ontology"@en ;
     rdfs:comment "An ontology for describing social media structures including posts, comments, and user interactions."@en ;
-   
 
 vpmReference:VPMReference rdf:type owl:Class ;
     rdfs:subClassOf archetype:Archetype ;
@@ -65,9 +61,6 @@ swym:Post rdf:type owl:Class ;
     rdfs:subClassOf SocialContent ;
     rdfs:comment "A post within the social collaboration platform."@en .
 
-
-#properties
-
 ds6w:type rdf:type owl:DatatypeProperty;
     rdfs:label "Type"@en;
     rdfs:comment "Specifies the type of object."@en;
@@ -98,13 +91,13 @@ ds6w:responsible rdf:type owl:ObjectProperty;
     rdfs:domain [ rdf:unionOf (PLMDMT_DocCustom PLMDMTDocument AecMember vpmReference:VPMReference Document 3DShape swym:Post) ];
     rdfs:range pno:Person.
 
-ds6w:socialComments rdf:type owl:DatatypeProperty;
+ds6w:Comments rdf:type owl:DatatypeProperty;
     rdfs:label "Comments"@en;
     rdfs:comment "Number of comments for the post."@en;
     rdfs:domain swym:Post;
     rdfs:range xsd:integer.
 
-ds6w:socialEndorsements rdf:type owl:DatatypeProperty;
+ds6w:endorsements rdf:type owl:DatatypeProperty;
     rdfs:label "Likes"@en;
     rdfs:comment "Number of Likes for the post."@en;
     rdfs:domain swym:Post;
@@ -117,7 +110,6 @@ ds6w:contentStructure rdf:type owl:DatatypeProperty;
     rdfs:range xsd:string;
     owl:oneOf ("Root" "Leaf" "Intermediate" "Standalone").
 
-
 ds6w:docExtension rdf:type owl:DatatypeProperty;
     rdfs:label "Document Extension"@en;
     rdfs:comment "The file format of the document, restricted to specific extensions."@en;
@@ -125,13 +117,12 @@ ds6w:docExtension rdf:type owl:DatatypeProperty;
     rdfs:range xsd:string;
     owl:oneOf ("jpg" "idx" "docx" "pdf" "stp" "xls" "doc" "txt").
 
-
-pno:role rdf:type owl:DatatypeProperty ;
+ds6w:businessRole rdf:type owl:DatatypeProperty ;
     rdfs:label "Role"@en ;
     rdfs:comment "The role or job title of the person."@en ;
     rdfs:domain pno:Person ;
     rdfs:range xsd:string .
-    owl:oneOf ("VP" "engineer" "software engineer" "Data Scientist").
+    owl:oneOf ("Strategy & Managemenent" "engineer" "software engineer" "Data Scientist").
 
 pno:name rdf:type owl:DatatypeProperty ;
     rdfs:label "Name"@en ;
@@ -139,34 +130,33 @@ pno:name rdf:type owl:DatatypeProperty ;
     rdfs:domain pno:Person ;
     rdfs:range xsd:string .
 
-# Example triple 
+# Example triple : 
 
 :doc001 rdf:type Document ;
     ds6w:type "PLMDMTDocument" ;
     ds6w:docExtension "pdf" ;
     ds6w:created "2024-06-01T00:00:00Z"^^xsd:dateTime ;
     ds6w:modified "2024-06-05T00:00:00Z"^^xsd:dateTime ;
-    ds6w:responsible :person123 ;
-    ds6w:lastModifiedBy :person124 ;
+    ds6w:responsible person123 ;
+    ds6w:lastModifiedBy person124 ;
 
 :prd01 rdf:type VpmReference ;
     ds6w:type "VpmReference" ;
     ds6w:created "2024-06-01T00:00:00Z"^^xsd:dateTime ;
     ds6w:modified "2024-06-05T00:00:00Z"^^xsd:dateTime ;
-    ds6w:responsible :person123 ;
-    ds6w:lastModifiedBy :person124 ;
+    ds6w:responsible person123 ;
+    ds6w:lastModifiedBy person124 ;
     ds6w:contentStructure "Root".
 
 pno:person123 rdf:type pno:Person ;
     pno:name "person123" ;
-    pno:role "VP" ;
+    ds6w:businessRole "VP" ;
 
 pno:person124 rdf:type pno:Person ;
     pno:name "person124" ;
-    pno:role "Data Scientist" ;
+    ds6w:businessRole "Data Scientist" ;
 
 swym:post001 rdf:type swym:Post ;
-    ds6w:socialComments 5 ;
-    ds6w:socialEndorsements 10.
-    ds6w:lastModifiedBy :person124 ;
-
+    ds6w:Comments 5 ;
+    ds6w:endorsements 10.
+    ds6w:lastModifiedBy person124 ;

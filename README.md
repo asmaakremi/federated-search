@@ -24,7 +24,7 @@ This proof of concept (POC) demonstrates the conversion of Natural Language Quer
 This project requires Docker Desktop or WSL (Windows Subsystem for Linux) installed on your machine. Follow these steps to set up the environment:
 
 ```bash
-git clone https://github.com/your-repository/nlq-to-uql-conversion.git
+git clone https://github.com/asmaakremi/federated-search.git
 cd federated-search
 docker-compose up --build
 ```

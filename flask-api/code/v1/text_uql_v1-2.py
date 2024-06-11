@@ -4,7 +4,7 @@ import logging
 import requests
 from datetime import datetime, timezone
 import re
-
+#Rename the project to 3Dsearch_flask_NLQtoUQL
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:8080", "https://vdevpril922dsy.dsone.3ds.com:444","https://ve4al631sy.dsone.3ds.com:444","https://dsext001-eu1-215dsi0708-ifwe.3dexperience.3ds.com"]) 
 
@@ -256,29 +256,6 @@ Please respond ONLY with the valid UQL query.
     except Exception as e:
         return str(e) 
 
-# def get_reflection_for_uql(full_prompt ,llm_response):
-#     reflection_prompt = f"""
-#     You were given the following prompt:
-
-#     {full_prompt}
-
-#     Your UQL conversion was:
-
-#     {llm_response}
-
-#     Please review your UQL query and revise it with these guidelines:
-#     1. Ensure the response contains only the UQL query—remove any additional text or explanations.
-#     2. Confirm all fields are correctly prefixed with 'ds6w:' as specified in the ontology.
-#     3. Use logical operators (AND, OR, NOT) correctly within the query.
-#     4. Important : Adhere to the required date and number formats as per UQL standards.
-#     5. Ensure that all conditions and joins are appropriately represented.
-#     6. You are tasked with generating queries based on a specified RDF ontology. When creating queries, it is crucial to respect the domain constraints of properties and the defined relationships between classes. Ensure that each property is used with the correct RDF class according to the ontology's specifications. Verify that the joins in your queries properly reflect the legitimate associations between entities as defined in the ontology.
-#     7. [ds6w:contentStructure]  property should not be applied to any other class outside of vpmReference:VPMReference. Using this property with any non-compliant class, such as swym:Post, is incorrect and may lead to data inconsistencies or errors in data interpretation
-#     8. Important :handling relative date references such as "this month" , "this year", "today" and "this quarter" Use your understanding of the CURRENT DATE  to dynamically calculate and apply the exact date ranges when processing queries.
-#     Please revise your UQL query based on these insights and ensure it strictly adheres to the rules provided.The output should include only the UQL query, strictly adhering to the syntax and ontology requirements without adding or assuming types not explicitly defined as relevant to the query. Respond ONLY with the valid UQL query.
-#     """
-#     corrected_uql = call_llm(reflection_prompt)
-#     return corrected_uql
 def get_reflection_for_uql(full_prompt, llm_response, errors):
     reflection_prompt = f"""
     You were given the following prompt:

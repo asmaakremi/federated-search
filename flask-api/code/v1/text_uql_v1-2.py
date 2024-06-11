@@ -171,7 +171,7 @@ You are an expert in transforming natural language queries into UQL queries usin
 
     pno:person123 rdf:type pno:Person ;
         pno:name "person123" ;
-        ds6w:businessRole "VP" ;
+        ds6w:businessRole "Strategy & Managemenent" ;
 
     pno:person124 rdf:type pno:Person ;
         pno:name "person124" ;
@@ -200,6 +200,7 @@ You are an expert in transforming natural language queries into UQL queries usin
     1. **Identify Relevant Classes and Properties**: Review the ontology to determine which classes or properties are relevant to the query.
     2. **Map Natural Language to RDF Classes**: Use the ontology to correlate the identified natural language elements with the appropriate RDF classes and predicates.Translate terms like 'physical products' and 'products' directly to their RDF class equivalents based on their definitions or equivalences in the ontology.
      - Specifically, treat 'physical products' and 'products' as synonymous with the 'VPMReference' classification in the RDF ontology.
+     -ds6w:businessRole Mapping**: Map 'VP' to ds6w:businessRole:"Strategy & Management"
     3. **Construct the UQL Query**: Formulate the UQL query based on these mappings, ensuring to use only those RDF classes and properties directly relevant or defined as equivalent.
 
 **Example UQL Query Construction**
@@ -238,6 +239,11 @@ You are an expert in transforming natural language queries into UQL queries usin
     - Example 5:
         - Natural Language: "Find me all products."
         - UQL: [ds6w:type]:"VPMReference"
+        This query assumes that 'physical products'and 'products' are defined in the RDF ontology as equivalent to VPMReference, thus not requiring a separate type for 'Product' unless explicitly defined or necessary according to additional ontology information.
+    
+    - Example 6:
+        - Natural Language: "Find me posts created by VPs"
+        - UQL: "[ds6w:type]:\"swym:Post\" AND [ds6w:businessRole]:\"Strategy & Management\"
         This query assumes that 'physical products'and 'products' are defined in the RDF ontology as equivalent to VPMReference, thus not requiring a separate type for 'Product' unless explicitly defined or necessary according to additional ontology information.
 
 Based on the natural language query "{query}" and the current date if needed, generate the corresponding UQL query using the ontology and RDF relationships. Ensure the output strictly adheres to the syntax and ontology requirements without adding or assuming types not explicitly defined.
@@ -372,6 +378,7 @@ def query_uql():
             user_query = final_uql_query  
         else:
             logging.info("No errors found, returning valid UQL.")
+            logging.info("Response",corrected_uql)
             return jsonify({"response": corrected_uql})
 
 if __name__ == '__main__':

@@ -26,6 +26,7 @@ This project requires Docker Desktop or WSL (Windows Subsystem for Linux) instal
 ```bash
 git clone https://github.com/asmaakremi/federated-search.git
 cd federated-search
+git checkout v1
 docker-compose up --build
 ```
 ## Results

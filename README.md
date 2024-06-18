@@ -29,6 +29,7 @@ cd federated-search
 git checkout v1
 docker-compose up --build
 ```
+Endpoint : http://127.0.0.1:5000/query_uql
 ## Results
 Below are example images showcasing the transformation of NLQ into UQL:
 ![Query n°1](images/document.png)

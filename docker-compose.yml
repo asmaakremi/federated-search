@@ -9,12 +9,3 @@ services:
       - /app
     environment:
       - FLASK_ENV=development
-
-  springboot-api:
-    build: .\groq
-    ports:
-      - "0.0.0.0:8080:8080"
-    volumes:
-      - /app
-    depends_on:
-      - flask-api

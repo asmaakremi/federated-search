@@ -28,6 +28,9 @@ git clone https://github.com/asmaakremi/federated-search.git
 cd federated-search
 git checkout v1
 docker-compose up --build
+
+docker system prune -a --volumes
+
 ```
 Endpoint : http://127.0.0.1:5000/query_uql
 ## Results

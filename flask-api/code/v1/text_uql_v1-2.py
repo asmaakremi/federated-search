@@ -64,7 +64,7 @@ You are an expert in transforming natural language queries into UQL queries usin
         rdfs:comment "An ontology defining properties of persons."@en .
     swym: a owl:Ontology ;
         rdfs:label "SWYM Social Media Ontology"@en ;
-        rdfs:comment "An ontology for describing social media structures including posts, comments, and user interactions."@en ;
+        rdfs:comment "An ontology for describing social media structures including posts, ideas comments, and user interactions."@en ;
     vpmReference:VPMReference rdf:type owl:Class ;
         rdfs:subClassOf archetype:Archetype ;
         rdfs:comment "Physical Product and is equivalent to any general product classification archetype"@en .
@@ -93,51 +93,54 @@ You are an expert in transforming natural language queries into UQL queries usin
     swym:Post rdf:type owl:Class ;
         rdfs:subClassOf SocialContent ;
         rdfs:comment "A post within the social collaboration platform."@en .
+    swym:Idea rdf:type owl:Class ;
+        rdfs:subClassOf SocialContent ;
+        rdfs:comment "an idea within the social collaboration platform."@en .
     ds6w:type rdf:type owl:DatatypeProperty;
         rdfs:label "Type"@en;
         rdfs:comment "Specifies the type of object."@en;
-        rdfs:domain [ rdf:unionOf (PLMDMT_DocCustom PLMDMTDocument AecMember pno:Person vpmReference:VPMReference Document 3DShape swym:Post) ];
+        rdfs:domain [ rdf:unionOf (PLMDMT_DocCustom PLMDMTDocument AecMember pno:Person vpmReference:VPMReference Document 3DShape swym:Post swym:Idea ) ];
         rdfs:range xsd:string.
     ds6w:modified rdf:type owl:DatatypeProperty;
         rdfs:label "Modified"@en;
         rdfs:comment "Date and time of last modification."@en;
-        rdfs:domain [ rdf:unionOf (PLMDMT_DocCustom PLMDMTDocument AecMember vpmReference:VPMReference Document 3DShape swym:Post) ];
+        rdfs:domain [ rdf:unionOf (PLMDMT_DocCustom PLMDMTDocument AecMember vpmReference:VPMReference Document 3DShape swym:Post swym:Idea ) ];
         rdfs:range xsd:dateTime.
     ds6w:created rdf:type owl:DatatypeProperty;
         rdfs:label "Created"@en;
         rdfs:comment "Date and time of creation."@en;
-        rdfs:domain [ rdf:unionOf (PLMDMT_DocCustom PLMDMTDocument AecMember vpmReference:VPMReference Document 3DShape swym:Post) ];
+        rdfs:domain [ rdf:unionOf (PLMDMT_DocCustom PLMDMTDocument AecMember vpmReference:VPMReference Document 3DShape swym:Post swym:Idea ) ];
         rdfs:range xsd:dateTime.
     ds6w:lastModifiedBy rdf:type owl:ObjectProperty;
         rdfs:label "Last Modified By"@en;
         rdfs:comment "The person who did the last modification."@en;
-        rdfs:domain [ rdf:unionOf (PLMDMT_DocCustom PLMDMTDocument AecMember vpmReference:VPMReference Document 3DShape swym:Post) ];
+        rdfs:domain [ rdf:unionOf (PLMDMT_DocCustom PLMDMTDocument AecMember vpmReference:VPMReference Document 3DShape swym:Post swym:Idea ) ];
         rdfs:range pno:Person.
     ds6w:responsible rdf:type owl:ObjectProperty;
         rdfs:label "Responsible"@en;
         rdfs:comment "The person responsible for the entity."@en;
-        rdfs:domain [ rdf:unionOf (PLMDMT_DocCustom PLMDMTDocument AecMember vpmReference:VPMReference Document 3DShape swym:Post) ];
+        rdfs:domain [ rdf:unionOf (PLMDMT_DocCustom PLMDMTDocument AecMember vpmReference:VPMReference Document 3DShape swym:Post swym:Idea ) ];
         rdfs:range pno:Person.
     ds6w:Comments rdf:type owl:DatatypeProperty;
         rdfs:label "Comments"@en;
         rdfs:comment "Number of comments for the post."@en;
-        rdfs:domain swym:Post;
+        rdfs:domain swym:Post swym:Idea ;
         rdfs:range xsd:integer.
     ds6w:endorsements rdf:type owl:DatatypeProperty;
         rdfs:label "Likes"@en;
         rdfs:comment "Number of Likes for the post."@en;
-        rdfs:domain swym:Post;
+        rdfs:domain [ rdf:unionOf (swym:Post swym:Idea)] ;
         rdfs:range xsd:integer.
     ds6w:contentStructure rdf:type owl:DatatypeProperty;
         rdfs:label "Content Structure"@en;
         rdfs:comment "Content structure of the product, indicating its hierarchy within the overall design or assembly . This property is applicable exclusively to instances of the vpmReference:VPMReference class"@en;
-        rdfs:domain [ rdf:unionOf (vpmReference:VPMReference, 3DShape) ];
+        rdfs:domain [ rdf:unionOf (vpmReference:VPMReference 3DShape) ];
         rdfs:range xsd:string;
         owl:oneOf ("Root" "Leaf" "Intermediate" "Standalone").
     ds6w:docExtension rdf:type owl:DatatypeProperty;
         rdfs:label "Document Extension"@en;
         rdfs:comment "The file format of the document, restricted to specific extensions."@en;
-        rdfs:domain [ rdf:unionOf (PLMDMT_DocCustom, PLMDMTDocument, AecMember, vpmReference:VPMReference, Document, 3DShape, swym:Post) ];
+        rdfs:domain [ rdf:unionOf (PLMDMT_DocCustom PLMDMTDocument  : Document ) ];
         rdfs:range xsd:string;
         owl:oneOf ("jpg" "idx" "docx" "pdf" "stp" "xls" "doc" "txt").
     ds6w:businessRole rdf:type owl:DatatypeProperty ;
@@ -180,6 +183,11 @@ You are an expert in transforming natural language queries into UQL queries usin
     swym:post001 rdf:type swym:Post ;
         ds6w:Comments 5 ;
         ds6w:endorsements 10.
+        ds6w:lastModifiedBy person124 ;
+
+    swym:idea001 rdf:type swym:Idea ;
+        ds6w:Comments 4 ;
+        ds6w:endorsements 1.
         ds6w:lastModifiedBy person124 ;
 
 ** UQL Documentation **
@@ -246,6 +254,7 @@ You are an expert in transforming natural language queries into UQL queries usin
         - UQL: "[ds6w:type]:\"swym:Post\" AND [ds6w:businessRole]:\"Strategy & Management\"
         This query assumes that 'physical products'and 'products' are defined in the RDF ontology as equivalent to VPMReference, thus not requiring a separate type for 'Product' unless explicitly defined or necessary according to additional ontology information.
 
+    
 Based on the natural language query "{query}" and the current date if needed, generate the corresponding UQL query using the ontology and RDF relationships. Ensure the output strictly adheres to the syntax and ontology requirements without adding or assuming types not explicitly defined.
 
 Please respond ONLY with the valid UQL query.
@@ -282,7 +291,7 @@ def validate_uql_response(uql_response):
     ]
     allowed_type_values = [
         'PLMDMT_DocCustom', 'PLMDMTDocument', 'AecMember', 'pno:Person', 
-        'VPMReference', 'Document', '3DShape', 'swym:Post'
+        'VPMReference', 'Document', '3DShape', 'swym:Post','swym:Idea'
     ]
 
     # Validate empty or invalid value comparisons
